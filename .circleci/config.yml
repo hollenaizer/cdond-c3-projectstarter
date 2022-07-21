@@ -178,17 +178,18 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - 'ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f'
-      - attach_workspace:
-          at: ~/
       - run:
           name: Install dependencies
           command: |
             apk add --update --no-cache tar gzip ansible aws-cli
+      - attach_workspace:
+          at: ~/
       - run:
           name: Configure server
           command: |
             cd .circleci/ansible
-            ansible-playbook -i inventory.txt configure-server.yml
+            ansible-playbook -i inventory.txt configure-server.yml\
+            --key-file ~/.ssh/id_rsa_ea4226eff0dbbedad3aecde758cf144f
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}     
 
