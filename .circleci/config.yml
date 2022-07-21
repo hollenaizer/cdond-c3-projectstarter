@@ -34,7 +34,6 @@ commands:
             #  cd ~/project/backend
             #  npm install
             #  Add revert code here. You can find this in the Getting Started section.
-              exit 1
             fi
             
 jobs:
@@ -156,8 +155,8 @@ jobs:
               --template-file .circleci/files/frontend.yml \
               --tags project=udapeople \
               --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
-              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7}  
-              exit 1
+              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} 
+              exit 1 
       - run:
           name: Add back-end ip to ansible inventory
           command: |
