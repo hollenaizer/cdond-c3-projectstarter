@@ -181,10 +181,6 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - 'ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f'
-      
-      # Checkout code from git
-      # Add ssh keys with fingerprint
-      # attach workspace
       - run:
           name: Install dependencies
           command: |
@@ -205,9 +201,9 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Install dependencies
-        command: |
-          apk add --update --no-cache tar gzip nodejs aws-cli curl
+          name: Install dependencies
+          command: |
+            apk add --update --no-cache tar gzip nodejs aws-cli curl
       - restore_cache:
           keys: [backend-build]
       - run:
