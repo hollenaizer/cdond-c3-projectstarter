@@ -224,10 +224,23 @@ jobs:
       - run:
           name: Run migrations
           command: |
+            export TYPEORM_HOST=$(aws cloudformation list-exports --query "Exports[?Name==\`EndpointAddress-${CIRCLE_WORKFLOW_ID:0:7}\`].Value" --output text)
+            echo $TYPEORM_HOST
+            echo TYPEORM_HOST=$TYPEORM_HOST >> ~/project/backend/.env
             cd backend
-            npm install
-            npm run build
-            npm run migrations >> migrations.txt
+            # npm install > /dev/null
+            # npm run build > /dev/null
+            npm run migrations >> migrations_dump.txt
+            cat migrations_dump.txt
+            # cd backend
+            # npm install
+            # npm run build
+            # npm run migrations >> migrations.txt
+
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/backend
       - run:
           name: Send migration results to kvdb
           command: |
