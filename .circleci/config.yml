@@ -172,7 +172,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-       - image: python:3.7-alpine3.16
+       - image: python:3.10-alpine3.16
     steps:
       - checkout:
       - add_ssh_keys:
@@ -187,9 +187,26 @@ jobs:
       - run:
           name: Configure server
           command: |
+            # add environment variables to server
+            echo NODE_ENV=production > ~/project/backend/.env
+            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> ~/project/backend/.env
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> ~/project/backend/.env
+            echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> ~/project/backend/.env
+            echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> ~/project/backend/.env
+            echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> ~/project/backend/.env
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> ~/project/backend/.env
+            echo TYPEORM_PORT=$TYPEORM_PORT >> ~/project/backend/.env
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> ~/project/backend/.env
+            cat ~/project/backend/.env
+
             cd .circleci/ansible
-            ansible-playbook -i inventory.txt configure-server.yml
-            # --key-file ~/.ssh/id_rsa_ea4226eff0dbbedad3aecde758cf144f
+            ansible-playbook -i inventory.txt configure-server.yml \
+            --key-file ~/.ssh/id_rsa_ea4226eff0dbbedad3aecde758cf144f
+
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/backend
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}     
 
@@ -336,8 +353,8 @@ workflows:
           # filters:
           #   branches:
           #     only: [test-feature-branch]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
       # - run-migrations:
       #     requires: [configure-infrastructure]
       # - deploy-frontend:
