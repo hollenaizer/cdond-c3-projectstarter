@@ -223,8 +223,9 @@ jobs:
           command: |
             cd backend
             npm install
+            npm audit fix
             npm audit fix --audit-level=critical --force
-            npm run migrations >> migrations.txt
+            npm run migrations >> migrations_dump.txt
       - persist_to_workspace:
           root: ~/
           paths:
@@ -232,7 +233,7 @@ jobs:
       - run:
           name: Send migration results to kvdb
           command: |
-            if grep -q "has been executed successfully." ~/project/backend/migrations.txt
+            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
               curl -insecure https://kvdb.io/AFtw797MiUKa7T2QyUbZBj/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
