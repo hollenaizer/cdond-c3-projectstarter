@@ -337,37 +337,37 @@ jobs:
       - revert-migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
-    deploy-backend:
-      docker:
-        - image: cimg/base:stable
-      steps:
-        - checkout
-        - add_ssh_keys:
-            fingerprints:
-              - "ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f" 
-        - attach_workspaces:
-            at: ~/
+  deploy-backend:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f" 
+      - attach_workspaces:
+          at: ~/
 
-        - install_nodejs
-        - install_awscli
-        - install_ansible
-        - run:
-            name: Deploy Backend
-            command: |
-              cd backend
-              npm i
-              npm run build
-              cd ..
+      - install_nodejs
+      - install_awscli
+      - install_ansible
+      - run:
+          name: Deploy Backend
+          command: |
+            cd backend
+            npm i
+            npm run build
+            cd ..
 
-              cd .circleci/ansible
-              mkdir files
-              cd files
-              tar -C ../../../backend -czvf artifact.tar.gz .
-              cd ../
+            cd .circleci/ansible
+            mkdir files
+            cd files
+            tar -C ../../../backend -czvf artifact.tar.gz .
+            cd ../
 
-              echo "Contents of the inventory.txt file is -------"
-              cat inventory.txt
-              ansible-playbook -i inventory.txt deploy-backend.yml  
+            echo "Contents of the inventory.txt file is -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml  
                     
   # deploy-backend:
   #   docker:
