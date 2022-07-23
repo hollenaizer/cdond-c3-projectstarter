@@ -222,8 +222,8 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            # npm install
-            # npm audit fix --audit-level=critical --force
+            npm install
+            npm audit fix --force
             npm run migrations >> migrations.txt
       - persist_to_workspace:
           root: ~/
