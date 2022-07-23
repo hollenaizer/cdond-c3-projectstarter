@@ -279,10 +279,10 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f"
-      - attach_workspaces:
-          at: ~/
-      - restore_cache:
-          keys: [frontend-build]
+      # - attach_workspaces:
+      #     at: ~/
+      # - restore_cache:
+      #     keys: [frontend-build]
       - install_nodejs
       - install_awscli
       - install_ansible
