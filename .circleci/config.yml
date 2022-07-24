@@ -356,7 +356,6 @@ jobs:
       - checkout
       - install_nodejs
       - install_awscli
-      - install ansible
 
       # - run:
       #     name: Install dependencies
