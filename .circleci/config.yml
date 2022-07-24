@@ -371,6 +371,7 @@ jobs:
             echo ${BACKEND_PUBLIC_IP}
             echo backend-${CIRCLE_WORKFLOW_ID:0:7}
             echo ${API_URL}
+            sudo pm2 log 
             if curl -s $API_URL/api/status | grep "ok"
             then
               exit 0
