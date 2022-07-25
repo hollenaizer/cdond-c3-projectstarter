@@ -237,7 +237,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: python:3.7-alpine3.16
+      - image: python:3.10-alpine3.16
     steps:
       - checkout
       - run:
@@ -272,7 +272,7 @@ jobs:
   deploy-frontend:
     docker:
       # Docker image here that supports AWS CLI
-      - image: cimg/base:stable
+      - image: python:3.10-alpine3.16
     steps:
       # Checkout code from git
       - checkout
@@ -312,7 +312,7 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
   deploy-backend:
     docker:
-      - image: cimg/base:stable
+      - image: python:3.10-alpine3.16
     steps:
       - checkout
       - add_ssh_keys:
@@ -350,7 +350,7 @@ jobs:
   smoke-test:
     docker:
       # Lightweight Docker image
-      - image: cimg/base:stable 
+      - image: python:3.10-alpine3.16 
     steps:
       # Checkout code from git
       - checkout
@@ -421,7 +421,7 @@ jobs:
 
   cleanup:
     docker:
-      - image: cimg/base:stable
+      - image: python:3.10-alpine3.16
     steps:
       - checkout
       - install_awscli
