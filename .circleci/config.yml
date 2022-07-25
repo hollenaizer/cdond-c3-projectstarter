@@ -283,9 +283,13 @@ jobs:
           root: ~/
           paths:
             - project/backend
-      - install_nodejs
-      - install_awscli
-      - install_ansible
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update --no-cache tar gzip nodejs npm aws-cli curl
+      # - install_nodejs
+      # - install_awscli
+      # - install_ansible
       - run:
           name: Get backend url
           command: |
@@ -326,9 +330,13 @@ jobs:
           root: ~/
           paths:
             - project/backend
-      - install_nodejs
-      - install_awscli
-      - install_ansible
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update --no-cache tar gzip nodejs npm aws-cli curl
+      # - install_nodejs
+      # - install_awscli
+      # - install_ansible
       - run:
           name: Deploy Backend
           command: |
