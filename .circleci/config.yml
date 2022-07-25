@@ -369,7 +369,8 @@ jobs:
             echo ${API_URL}
             # sudo pm2 log 
             # if curl -s $API_URL/api/status | grep "ok"
-            if curl google.com | grep "ok"
+            # if curl google.com | grep "ok"
+            if curl -s --head "https://google.com"
             then
               exit 0
             else
