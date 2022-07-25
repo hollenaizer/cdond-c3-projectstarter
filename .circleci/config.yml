@@ -435,7 +435,7 @@ jobs:
 
   cleanup:
     docker:
-      - image: python:3.10-alpine3.16
+      - image: amazon/aws-cli
     steps:
       - checkout
       - install_awscli
