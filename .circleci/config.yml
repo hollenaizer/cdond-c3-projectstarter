@@ -64,7 +64,7 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -81,7 +81,7 @@ jobs:
 
   build-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -98,7 +98,7 @@ jobs:
 
   test-frontend:
     docker:
-      - image: circleci/node:13.8.0  
+      - image: cimg/node:13.8.0  
     steps:
       - checkout
       - restore_cache:
@@ -115,7 +115,7 @@ jobs:
                 
   test-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -130,7 +130,7 @@ jobs:
             
   scan-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -144,7 +144,7 @@ jobs:
             npm audit --audit-level=critical
   scan-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -161,9 +161,10 @@ jobs:
 
   deploy-infrastructure:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/base:stable
     steps:
       - checkout
+      - install_awscli
       - run: yum install -y tar gzip 
       - run:
           name: Ensure back-end infrastructure exists
@@ -197,7 +198,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.16
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - add_ssh_keys:
@@ -237,7 +238,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: python:3.7-alpine3.16
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - run:
@@ -272,10 +273,15 @@ jobs:
   deploy-frontend:
     docker:
       # Docker image here that supports AWS CLI
-      - image: python:3.7-alpine3.16
+      - image: cimg/base:stable
     steps:
       # Checkout code from git
       - checkout
+      - install_awscli
+      - install_nodejs
+      - install_ansible
+      - restore_cache:
+          keys: [frontend-deps]
       - add_ssh_keys:
           fingerprints:
             - "ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f"
@@ -286,10 +292,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update --no-cache tar gzip nodejs npm aws-cli curl
-      # - install_nodejs
-      # - install_awscli
-      # - install_ansible
+            # apk add --update --no-cache tar gzip nodejs npm aws-cli curl
+            cd frontend
+            nmp install
+      
       - run:
           name: Get backend url
           command: |
@@ -320,7 +326,7 @@ jobs:
       #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
   deploy-backend:
     docker:
-      - image: python:3.7-alpine3.16
+      - image: cimg/base:stable
     steps:
       - checkout
       - add_ssh_keys:
@@ -364,7 +370,7 @@ jobs:
   smoke-test:
     docker:
       # Lightweight Docker image
-      - image: python:3.7-alpine3.16 
+      - image: cimg/base:stable 
     steps:
       # Checkout code from git
       - checkout
@@ -409,7 +415,7 @@ jobs:
 
   cloudfront-update:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/base:stable
     steps:
       - checkout
       - run:
@@ -435,7 +441,7 @@ jobs:
 
   cleanup:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/base:stable
     steps:
       - checkout
       - install_awscli
