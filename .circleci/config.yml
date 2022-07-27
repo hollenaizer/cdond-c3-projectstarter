@@ -288,7 +288,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # apk add --update --no-cache tar gzip nodejs npm aws-cli curl
+            apk add --update --no-cache tar gzip nodejs npm aws-cli curl
             cd frontend
             npm install
       - run:
@@ -308,12 +308,12 @@ jobs:
           command: |
             # your code here
             cd frontend
-            # sudo npm install -g npm@latest
+            sudo npm install -g npm@latest
             # rm -rf node_modules
             npm run build 
-            # npm audit fix --audit-level=critical --force  
-            # npm run build
-            # tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            npm audit fix --audit-level=critical --force  
+            npm run build
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
 
       - add_ssh_keys:
