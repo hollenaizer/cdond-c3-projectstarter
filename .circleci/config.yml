@@ -420,11 +420,11 @@ jobs:
             export API_URL=http://${BACKEND_PUBLIC_IP}:3030
             if curl -s $API_URL/api/status | grep "ok"
             # if curl google.com | grep "ok"
-            # if curl -s --head "https://google.com"
+            if curl -s --head "https://google.com"
             then
-              exit 0
+              return 0
             else
-              exit 1
+              return 1
             fi
       - run:
           name: Frontend smoke test.
@@ -433,9 +433,9 @@ jobs:
             echo $FRONTEND_WEBSITE
             if curl -s $FRONTEND_WEBSITE | grep "Welcome"
             then
-              exit 0
+              return 0
             else
-              exit 1
+              return 1
             fi
       # - destroy-environment:
       #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7} 
@@ -448,21 +448,23 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
+      - install_awscli
+      - install_nodejs
       - run:
           name: Install dependencies / Save old Workflow ID to kvdb.io
           command: |
             export OLD_WORKFLOW_ID=$(aws cloudformation \
-            list-exports --query "Exports[?Name==\'WorkflowID\'].Value" \
-            --no-paginate --output text)
+              list-exports --query "Exports[?Name==\'WorkflowID\'].Value" \
+              --no-paginate --output text)
             echo "OLD Workflow ID: $OLD_WORKFLOW_ID"
             curl https://kvdb.io/AFtw797MiUKa7T2QyUbZBj/old_workflow_id -d "${OLD_WORKFLOW_ID"
       - run:
           name: Update cloudfront distribution
           command: |
             aws cloudformation deploy \
-            --template-file .circleci/files/cloudfront.yml \
-            --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-            --stack-name InitialStack
+              --template-file .circleci/files/cloudfront.yml \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --stack-name InitialStack
       # - destroy-environment:
       #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7} 
       # - revert-migrations:
