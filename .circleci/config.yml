@@ -288,7 +288,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update --no-cache tar gzip nodejs npm aws-cli curl
+            # apk add --update --no-cache tar gzip nodejs npm aws-cli curl
             cd frontend
             npm install
       - run:
