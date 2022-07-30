@@ -419,7 +419,7 @@ jobs:
       # - revert-migrations:   
 
   smoke-test:
-      # Lightweight Docker image
+    docker:  # Lightweight Docker image
       - image: cimg/base:stable
     steps:
       # Checkout code from git
