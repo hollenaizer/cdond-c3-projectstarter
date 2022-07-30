@@ -408,6 +408,13 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
+  install_grep:
+    description: Install grep with sudo
+    steps:
+      - run:
+          name: grep installation
+          command: |
+             sudo apt install -y grep
       - install_awscli
       - install_nodejs
       - run:
