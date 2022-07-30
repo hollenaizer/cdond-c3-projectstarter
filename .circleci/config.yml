@@ -29,6 +29,14 @@ commands:
           sudo add-apt-repository --yes --update ppa:ansible/ansible
           sudo apt install ansible -y
 
+  install_grep:
+    description: Install grep with sudo
+    steps:
+    - run:
+        name: grep installation
+        command: |
+             sudo apt install -y grep
+
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
@@ -408,13 +416,7 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-  install_grep:
-    description: Install grep with sudo
-    steps:
-      - run:
-          name: grep installation
-          command: |
-             sudo apt install -y grep
+      - install_grep
       - install_awscli
       - install_nodejs
       - run:
