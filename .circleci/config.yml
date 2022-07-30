@@ -312,7 +312,7 @@ jobs:
             # rm -rf node_modules
             npm run build 
             # npm audit fix --force
-            npm audit fix --audit-level=critical --force  
+            # npm audit fix --audit-level=critical --force  
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
