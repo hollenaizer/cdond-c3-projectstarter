@@ -470,24 +470,24 @@ jobs:
       - install_awscli
       - install_nodejs
       - install_curl
-      # - run:
-      #     name: Backend smoke test.
-      #     command: |
-      #       BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
-      #         --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-      #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
-      #         --output text)
+      - run:
+          name: Backend smoke test.
+          command: |
+            BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
 
-      #       export API_URL=http://${BACKEND_PUBLIC_IP}:3030
-      #       # echo "${API_URL}"
-      #       if curl -s $API_URL/api/status | grep "ok"
-      #       # if curl google.com | grep "ok"
-      #       # if curl -s --head "https://google.com"
-      #       then
-      #         exit 0
-      #       else
-      #         exit 1
-      #       fi
+            export API_URL=http://${BACKEND_PUBLIC_IP}:3030
+            echo "${API_URL}"
+            if curl $API_URL/api/status | grep "ok"
+            # if curl google.com | grep "ok"
+            # if curl -s --head "https://google.com"
+            then
+              exit 0
+            else
+              exit 1
+            fi
       - run:
           name: Frontend smoke test.
           command: |
