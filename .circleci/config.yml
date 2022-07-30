@@ -29,6 +29,15 @@ commands:
           sudo add-apt-repository --yes --update ppa:ansible/ansible
           sudo apt install ansible -y
 
+  install_curl:
+    description: Install curl with sudo
+    steps:
+      - run:
+          name: curl installation
+          command: |
+             sudo apt install -y curl
+
+
   install_grep:
     description: Install grep with sudo
     steps:
