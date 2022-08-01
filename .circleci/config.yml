@@ -344,10 +344,10 @@ jobs:
       
       
      
-      # - destroy-environment:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      # - revert-migrations:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
   deploy-backend:
     docker:
       - image: cimg/base:stable
@@ -495,14 +495,14 @@ jobs:
             echo $FRONTEND_WEBSITE
             if curl -s $FRONTEND_WEBSITE | grep "Welcome"
             then
-              exit 0
+              return 1
             else
-              exit 1
+              return 1
             fi
-      # - destroy-environment:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7} 
-      # - revert-migrations:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment: 
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7} 
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       # Here's where you will add some code to rollback on failure  
 
   cloudfront-update:
@@ -562,10 +562,10 @@ jobs:
             --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project=udapeople
             echo "Current Workflow ID: ${CIRCLE_WORKFLOW_ID:0:7}"    
-      # - destroy-environment:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7} 
-      # - revert-migrations:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7} 
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       # Here's where you will add some code to rollback on failure  
 
   # cleanup:
