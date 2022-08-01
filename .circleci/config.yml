@@ -512,6 +512,10 @@ jobs:
       - checkout
       - install_awscli
       - install_nodejs
+      - restore_cache:
+          keys: [backend-deps]
+      - attach_workspace:
+          at: ~/
       - run:
           name: Get old stack workflow id
           command: |
