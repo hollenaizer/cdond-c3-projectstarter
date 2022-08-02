@@ -513,30 +513,30 @@ jobs:
       - install_awscli
       - install_nodejs
       - restore_cache:
-          keys: [backend-deps]
+          keys: [backend-build]
       - attach_workspace:
           at: ~/
-      - run:
-          name: Get old stack workflow id
-          command: |
-            # export OldWorkflowID="the id here"
-            export OldWorkflowID=$(aws cloudformation \
-            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            --no-paginate --output text)
-            echo $OldWorkflowID >> ~/oldstack.txt
-            cat ~/oldstack.txt
-            OldWorkflowID=$(cat ~/oldstack.txt)
-            echo "Old Work Flow ID: ${OldWorkflowID}"
-            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
-            then
-              echo -e " ------------- Deleting Old Stack and s3 Bucket -------------\n\n "
-              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
-              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
-              echo "Stacks and associated s3 bucket Deleted"
-            else
-              echo "------------- Error deleting Old Stack and s3 Bucket ------------- "
-            fi
+      # - run:
+      #     name: Get old stack workflow id
+      #     command: |
+      #       # export OldWorkflowID="the id here"
+      #       export OldWorkflowID=$(aws cloudformation \
+      #       list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+      #       --no-paginate --output text)
+      #       echo $OldWorkflowID >> ~/oldstack.txt
+      #       cat ~/oldstack.txt
+      #       OldWorkflowID=$(cat ~/oldstack.txt)
+      #       echo "Old Work Flow ID: ${OldWorkflowID}"
+      #       if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
+      #       then
+      #         echo -e " ------------- Deleting Old Stack and s3 Bucket -------------\n\n "
+      #         aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+      #         aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+      #         aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+      #         echo "Stacks and associated s3 bucket Deleted"
+      #       else
+      #         echo "------------- Error deleting Old Stack and s3 Bucket ------------- "
+      #       fi
       # - run:
       #     name: Install dependencies / Save old Workflow ID to kvdb.io
       #     command: |
