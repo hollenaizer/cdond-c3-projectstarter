@@ -490,7 +490,6 @@ jobs:
             else
               echo "----------------------Cannot Cleanup------------------------"
             fi
-
       - run:
           name: Update cloudfront distribution
           command: |
