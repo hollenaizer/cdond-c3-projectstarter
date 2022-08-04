@@ -466,23 +466,23 @@ jobs:
           keys: [backend-build]
       - attach_workspace:
           at: ~/
-      - run:
-          name: Remove old stacks and files
-          command: |
-            export OldWorkflowID="the id here"
-            export OldWorkflowID=$(aws cloudformation \
-            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            --no-paginate --output text)
-            echo Old Workflow ID: $OldWorkflowID 
-            if [[ "${CIRCLE_WORKFLOW_ID:0:5}" != "${OldWorkflowID}" ]]
-            then
-              echo "-----------------Delete Confirmed--------------------------"
-              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
-              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
-            else
-              echo "----------------------Cannot Cleanup------------------------"
-            fi
+      # - run:
+      #     name: Remove old stacks and files
+      #     command: |
+      #       export OldWorkflowID="the id here"
+      #       export OldWorkflowID=$(aws cloudformation \
+      #       list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+      #       --no-paginate --output text)
+      #       echo Old Workflow ID: $OldWorkflowID 
+      #       if [[ "${CIRCLE_WORKFLOW_ID:0:5}" != "${OldWorkflowID}" ]]
+      #       then
+      #         echo "-----------------Delete Confirmed--------------------------"
+      #         aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+      #         aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+      #         aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+      #       else
+      #         echo "----------------------Cannot Cleanup------------------------"
+      #       fi
       - run:
           name: Update cloudfront distribution
           command: |
