@@ -414,7 +414,6 @@ jobs:
       # - destroy-environment:
       # - revert-migrations:   
 
-
   smoke-test:
     docker:
       # Lightweight Docker image
