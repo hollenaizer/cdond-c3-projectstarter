@@ -517,13 +517,13 @@ jobs:
     steps:
       - checkout
       - install_awscli
-      - run:
-          name: Cleanup Stacks
-          command: |
-            export STACKS=($(aws cloudformation list-stacks \
-            --query "StackSummaries[*].StackName" \
-            --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-            echo Stack names: "${STACKS[@]}
+      # - run:
+      #     name: Cleanup Stacks
+      #     command: |
+      #       export STACKS=($(aws cloudformation list-stacks \
+      #       --query "StackSummaries[*].StackName" \
+      #       --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+      #       echo Stack names: "${STACKS[@]}
 
       - run:
           name: Get old stack workflow id and cleanup
