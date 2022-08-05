@@ -509,13 +509,14 @@ jobs:
     steps:
       - checkout
       - install_awscli
+      - attach_workspace:
+          at: ~/
       - run:
-          name: Cleanup Stacks
+          name: Cleanup server
           command: |
-            export STACKS=($(aws cloudformation list-stacks \
-            --query "StackSummaries[*].StackName" \
-            --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-            echo Stack names: "${STACKS[@]}
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+            --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
+            echo Stack names: "${STACKS[@]}"
       
 workflows:
   default:
