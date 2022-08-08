@@ -352,13 +352,14 @@ jobs:
       - install_awscli
       - install_ansible
       - install_nodejs
+      - restore_cache:
+          keys: [backend-build]
       - add_ssh_keys:
           fingerprints:
             - "ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f" 
       - attach_workspace:
           at: ~/
-      - restore_cache:
-          keys: [backend-build]
+      
       - run:
           name: Install dependencies
           command: |
@@ -377,10 +378,11 @@ jobs:
           name: Deploy backend
           command: |
             export TYPEORM_MIGRATIONS_DIR=./migrations
-            export TYPEORM_ENTITIES=./modules/domain/*/.entity{.ts,.js}
+            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
             export TYPEORM_MIGRATIONS=./migrations/*.ts
 
             cd .circleci/ansible
+            echo "Reading contents of the inventory.txt file ------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
       # - install_awscli
@@ -406,8 +408,8 @@ jobs:
       #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       # - revert-migrations:
       #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      # - destroy-environment:
-      # - revert-migrations:   
+      - destroy-environment:
+      - revert-migrations:   
 
   smoke-test:
     docker:
