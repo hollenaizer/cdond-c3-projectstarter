@@ -3,7 +3,7 @@
 - name: "Install Node.js 13"
   shell: |
     # Install Node.js LTS version as our base Node.js version in the roles/tasks/main.yml
-    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
     sudo apt-get install -y nodejs
 
     # Use n version manager to use Node.js v13.8.0
