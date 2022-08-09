@@ -233,7 +233,7 @@ jobs:
       - install_ansible
       - install_awscli
       - add_ssh_keys:
-          fingerprints: ["ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f"]
+          fingerprints: ["7f:9f:d6:89:25:12:24:5b:d7:61:47:43:ef:3d:f6:24"]
       # attach workspace
       - attach_workspace:
           at: ~/
@@ -358,9 +358,9 @@ jobs:
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:5} --recursive
 
-      - add_ssh_keys:
-          fingerprints:
-            - "ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f"
+      # - add_ssh_keys:
+      #     fingerprints:
+      #       - "ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f"
       - persist_to_workspace:
           root: ~/
           paths:
@@ -380,7 +380,7 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - add_ssh_keys:
-          fingerprints: ["ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f"]
+          fingerprints: ["7f:9f:d6:89:25:12:24:5b:d7:61:47:43:ef:3d:f6:24"]
       - attach_workspace:
           at: ~/
       
