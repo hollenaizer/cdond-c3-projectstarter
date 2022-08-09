@@ -11,13 +11,16 @@ commands:
             unzip awscliv2.zip
             sudo ./aws/install
   install_nodejs:
-    description: Install Node.js 13
+    description: Install Node.js 13.8.0
     steps:
     - run: 
-        name: Install Node.js 13
+        name: Install Node.js 13.8.0
         command: |
           curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
           sudo apt install -y nodejs
+          sudo npm install --global n
+          sudo n 13.8.0
+
   install_ansible:
     description: Install Ansible
     steps:
@@ -178,7 +181,7 @@ jobs:
 
   deploy-infrastructure:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_awscli
@@ -224,61 +227,61 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_ansible
       - install_awscli
       - add_ssh_keys:
-          fingerprints:
-            - 'ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f'
+          fingerprints: ["ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f"]
       # attach workspace
       - attach_workspace:
           at: ~/
-      # - run:
-      #     name: Configure Server
-      #     command: |
-      #       cd .circleci/ansible
-      #       cat inventory.txt
-      #       ansible-playbook -i inventory.txt configure-server.yml
+      - run:
+          name: Configure Server
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml
       # - run:
       #     name: Install dependencies
       #     command: |
       #       apk add --update --no-cache tar gzip ansible aws-cli
       # - attach_workspace:
       #     at: ~/
-      - run:
-          name: Configure server
-          command: |
-            # add environment variables to server
-            echo NODE_ENV=production > ~/project/backend/.env
-            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> ~/project/backend/.env
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> ~/project/backend/.env
-            echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> ~/project/backend/.env
-            echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> ~/project/backend/.env
-            echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> ~/project/backend/.env
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> ~/project/backend/.env
-            echo TYPEORM_PORT=$TYPEORM_PORT >> ~/project/backend/.env
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> ~/project/backend/.env
-            cat ~/project/backend/.env
+      # - run:
+      #     name: Configure server
+      #     command: |
+      #       # add environment variables to server
+      #       echo NODE_ENV=production > ~/project/backend/.env
+      #       echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> ~/project/backend/.env
+      #       echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> ~/project/backend/.env
+      #       echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> ~/project/backend/.env
+      #       echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> ~/project/backend/.env
+      #       echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> ~/project/backend/.env
+      #       echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> ~/project/backend/.env
+      #       echo TYPEORM_PORT=$TYPEORM_PORT >> ~/project/backend/.env
+      #       echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> ~/project/backend/.env
+      #       cat ~/project/backend/.env
 
-            cd .circleci/ansible
-            ansible-playbook -i inventory.txt configure-server.yml \
-            --key-file ~/.ssh/id_rsa_ea4226eff0dbbedad3aecde758cf144f
+      #       cd .circleci/ansible
+      #       ansible-playbook -i inventory.txt configure-server.yml \
+      #       --key-file ~/.ssh/id_rsa_ea4226eff0dbbedad3aecde758cf144f
 
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/backend
+      # - persist_to_workspace:
+      #     root: ~/
+      #     paths:
+      #       - project/backend
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:5}     
 
   run-migrations:
     docker:
-      - image: cimg/node:13.8.0
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_awscli
+      - install_nodejs
       # - run:
       #     name: Install dependencies
       #     command: |
@@ -291,6 +294,7 @@ jobs:
             cd backend
             npm install
             npm run migrations >> migrations_dump.txt
+            cat migrations_dump.txt
       - persist_to_workspace:
           root: ~/
           paths:
@@ -301,6 +305,8 @@ jobs:
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
               curl -insecure https://kvdb.io/AFtw797MiUKa7T2QyUbZBj/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+            else
+              echo "No Migrations are pending"
             fi
      # Here's where you will add some code to rollback on failure 
       - destroy-environment:
@@ -311,15 +317,15 @@ jobs:
   deploy-frontend:
     docker:
       # Docker image here that supports AWS CLI
-      - image: cimg/base:stable
+      - image: cimg/python:3.10
     steps:
       # Checkout code from git
       - checkout
       - install_awscli
       - install_nodejs
       # - install_ansible
-      # - restore_cache:
-      #     keys: [frontend-build]
+      - restore_cache:
+          keys: [frontend-build]
       - run:
           name: Install dependencies
           command: |
@@ -365,7 +371,7 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:5}
   deploy-backend:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_awscli
@@ -374,8 +380,8 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - add_ssh_keys:
-          fingerprints:
-            - "ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f" 
+          fingerprints: ["ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f"]
+            - "" 
       - attach_workspace:
           at: ~/
       
@@ -433,7 +439,7 @@ jobs:
   smoke-test:
     docker:
       # Lightweight Docker image
-      - image: cimg/base:stable 
+      - image: cimg/python:3.10 
     steps:
       # Checkout code from git
       - checkout
@@ -478,7 +484,7 @@ jobs:
 
   cloudfront-update:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_awscli
@@ -526,7 +532,7 @@ jobs:
 
   cleanup:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_awscli
