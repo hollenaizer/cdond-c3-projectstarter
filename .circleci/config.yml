@@ -1,5 +1,4 @@
 version: 2.1
-orbs:
 
 commands:
   install_awscli:
@@ -28,7 +27,10 @@ commands:
      - run:
         name: Install Ansible
         command: |
-          python3 -m pip install --user ansible
+          sudo apt update
+          sudo apt install software-properties-common -y
+          sudo add-apt-repository --yes --update ppa:ansible/ansible
+          sudo apt install ansible -y
 
   install_curl:
     description: Install curl with sudo
@@ -52,7 +54,7 @@ commands:
     parameters:
       workflow_id:
         type: string
-        # default: ${CIRCLE_WORKFLOW_ID:0:5}  
+        # default: ${CIRCLE_WORKFLOW_ID}  
     steps:
       - run:
           name: Destroy environments
@@ -68,22 +70,16 @@ commands:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
       workflow_id:
-        type: string
-        # default: ${CIRCLE_WORKFLOW_ID:0:5}    
+        type: string    
     steps:
       - run:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS=$(curl --insecure  https://kvdb.io/${MY_KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
-            
-            # Logic for reverting the database state
-            if (( $SUCCESS == 1 ));
-            then
-              cd ~/project/backend
-              npm install
-              npm run migration:revert
-            fi
+            cd ~/project/backend
+            npm install
+            npm run build
+            npm run migrations:revert
             
 jobs:
   build-frontend:
@@ -297,7 +293,6 @@ jobs:
           command: |
             cd backend
             npm install
-            # npm audit fix --audit-level=critical --force
             npm run migrations >> migrations_dump.txt
             cat migrations_dump.txt
       - persist_to_workspace:
@@ -309,15 +304,15 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl --insecure https://kvdb.io/${MY_KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:5}  -d '1'
+              curl -insecure https://kvdb.io/AFtw797MiUKa7T2QyUbZBj/migration_${CIRCLE_WORKFLOW_ID:0:5}  -d '1'
             else
               echo "No Migrations are pending"
             fi
      # Here's where you will add some code to rollback on failure 
-      # - destroy-environment:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:5} 
-      # - revert-migrations:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:5}    
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:5} 
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:5}    
 
   deploy-frontend:
     docker:
