@@ -438,7 +438,6 @@ jobs:
 
   smoke-test:
     docker:
-      # Lightweight Docker image
       - image: cimg/python:3.10 
     steps:
       # Checkout code from git
