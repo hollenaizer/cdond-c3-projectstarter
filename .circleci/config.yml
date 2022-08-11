@@ -293,13 +293,13 @@ jobs:
           command: |
             cd backend
             npm install
-            sudo npm install -g npm
-            npm run migrations >> migrations_dump.txt
+            # sudo npm install -g npm
+            npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/backend
+      # - persist_to_workspace:
+      #     root: ~/
+      #     paths:
+      #       - project/backend
       - run:
           name: Send migration results to kvdb
           command: |
