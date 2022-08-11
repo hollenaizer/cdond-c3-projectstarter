@@ -266,8 +266,7 @@ jobs:
 
       #       cd .circleci/ansible
       #       ansible-playbook -i inventory.txt configure-server.yml \
-      #       --key-file ~/.ssh/id_rsa_ea4226eff0dbbedad3aecde758cf144f
-
+      #       --key-file ~/.ssh/id_rsa_ea4226eff0dbbedad3aecde758cf144
       # - persist_to_workspace:
       #     root: ~/
       #     paths:
