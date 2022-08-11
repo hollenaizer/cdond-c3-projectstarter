@@ -233,7 +233,7 @@ jobs:
       - install_ansible
       - install_awscli
       - add_ssh_keys:
-          fingerprints: ["7f:9f:d6:89:25:12:24:5b:d7:61:47:43:ef:3d:f6:24"]
+          fingerprints: ["5c:50:aa:85:c8:5c:33:44:17:6f:46:53:70:2a:f5:2a"]
       # attach workspace
       - attach_workspace:
           at: ~/
@@ -356,7 +356,7 @@ jobs:
             # npm audit fix --force
             # npm audit fix --audit-level=critical --force  
             npm run build
-            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:5}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:5} --recursive
 
       # - add_ssh_keys:
@@ -381,7 +381,7 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - add_ssh_keys:
-          fingerprints: ["7f:9f:d6:89:25:12:24:5b:d7:61:47:43:ef:3d:f6:24"]
+          fingerprints: ["5c:50:aa:85:c8:5c:33:44:17:6f:46:53:70:2a:f5:2a"]
       - attach_workspace:
           at: ~/
       
