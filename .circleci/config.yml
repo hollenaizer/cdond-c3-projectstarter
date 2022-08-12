@@ -208,7 +208,7 @@ jobs:
           command: |
             BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
             --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:5}" \
-            --query 'Reservations[].Instances[].PublicIpAddress' \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --output text)
             echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
@@ -326,7 +326,7 @@ jobs:
       - install_nodejs
       # - install_ansible
       - restore_cache:
-          keys: [frontend-build]
+          keys: [backend-build]
       - run:
           name: Install dependencies
           command: |
@@ -350,26 +350,26 @@ jobs:
           command: |
             # your code here
             cd frontend
-            sudo npm install -g npm@latest
+            # sudo npm install -g npm@latest
             # rm -rf node_modules
-            npm run build 
+            # npm run build 
             # npm audit fix --force
             # npm audit fix --audit-level=critical --force  
             npm run build
-            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:5}".tar.gz dist
+            # tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:5}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:5} --recursive
 
       # - add_ssh_keys:
       #     fingerprints:
       #       - "ea:42:26:ef:f0:db:be:da:d3:ae:cd:e7:58:cf:14:4f"
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/backend 
+      # - persist_to_workspace:
+      #     root: ~/
+      #     paths:
+      #       - project/backend 
       - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:5}
+          # workflow_id: ${CIRCLE_WORKFLOW_ID:0:5}
       - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:5}
+          # workflow_id: ${CIRCLE_WORKFLOW_ID:0:5}
   deploy-backend:
     docker:
       - image: cimg/python:3.10
@@ -433,8 +433,8 @@ jobs:
       #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       # - revert-migrations:
       #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      # - destroy-environment:
-      # - revert-migrations:   
+      - destroy-environment:
+      - revert-migrations:   
 
   smoke-test:
     docker:
@@ -467,7 +467,7 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:5}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
+            FRONTEND_WEBSITE="http://udapeople-${CIRCLE_WORKFLOW_ID:0:5}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com/#/employees"
             echo $FRONTEND_WEBSITE
             if curl -s $FRONTEND_WEBSITE | grep "Welcome"
             then
@@ -476,9 +476,9 @@ jobs:
               exit 1
             fi
       - destroy-environment: 
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:5} 
+          # workflow_id: ${CIRCLE_WORKFLOW_ID:0:5} 
       - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:5}
+          # workflow_id: ${CIRCLE_WORKFLOW_ID:0:5}
       # Here's where you will add some code to rollback on failure  
 
   cloudfront-update:
@@ -525,9 +525,9 @@ jobs:
             echo OldWorkflowID: "${OldWorkflowID}"
             echo "Current Workflow ID: ${CIRCLE_WORKFLOW_ID:0:5}"
       - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:5}
+          # workflow_id: ${CIRCLE_WORKFLOW_ID:0:5}
       - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:5}
+          # workflow_id: ${CIRCLE_WORKFLOW_ID:0:5}
 
   cleanup:
     docker:
